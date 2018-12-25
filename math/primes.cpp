@@ -2,12 +2,13 @@
  * File              : primes.cpp
  * Author            : recurze
  * Date              : 11:44 25.12.2018
- * Last Modified Date: 14:13 25.12.2018
+ * Last Modified Date: 21:25 25.12.2018
  */
 
 #include <cmath>
 #include <vector>
 #include <map>
+#include <algorithm>
 
 bool isPrime(int n) {
     if (n <= 1) return 0;
@@ -24,8 +25,9 @@ bool isPrime(int n) {
 }
 
 const int N = 1010101;
-bool prime[N] = {1};
+bool prime[N];
 void sieve(int n) {
+    std::fill(prime, prime + n, 1);
     prime[0] = 0;
     prime[1] = 0;
     float m = sqrt(n);
@@ -52,12 +54,16 @@ std::map<int, int> getPrimefactorsCount(int n) {
     std::map<int, int> factorsCount;
     if (n < 2) return factorsCount;
 
-    factorsCount.insert({2, removeDinN(n, 2)});
-    factorsCount.insert({3, removeDinN(n, 3)});
+    int k = removeDinN(n, 2);
+    if (k) factorsCount.insert({2, k});
+    k = removeDinN(n, 3);
+    if (k) factorsCount.insert({3, k});
 
     for (int i = 5, j = 7; i*i <= n ; i += 6, j += 6) {
-        factorsCount.insert({i, removeDinN(n, i)});
-        factorsCount.insert({j, removeDinN(n, j)});
+        k = removeDinN(n, i);
+        if (k) factorsCount.insert({i, k});
+        k = removeDinN(n, j);
+        if (k) factorsCount.insert({j, k});
     }
     if (n - 1) factorsCount.insert({n, 1});
     return factorsCount;
