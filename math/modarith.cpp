@@ -1,31 +1,54 @@
-/**
- * File              : modarith.cpp
- * Author            : recurze
- * Date              : 13:34 25.12.2018
- * Last Modified Date: 17:05 25.12.2018
- */
-
-inline void add(int& a, int b, int p = MD) { a += b; a -= (a >= p)*p; }
-inline void sub(int& a, int b, int p = MD) { a -= b; a -= (a <  0)*p; }
-
-inline int mul(int a, int b, int p = MD) { return (int) (1L*a*b)%p; }
-inline int div(int a, int b, int p = MD) { return mul(a, inverse(b, p), p); }
-
-int exp(int a, long long b, int p = MD) {
-    int res = 1;
-    while (b) {
-        if (b&1) {
-            res = mul(res, a);
-        }
-        a = mul(a, a);
-        b >>= 1;
+template <typename T, typename E>
+T exp(T a, E b, const T& p = MD) {
+    T res = 1;
+    for (; b; b >>= 1, a = mul(a, a)) if (b&1) {
+        res = mul(res, a);
     }
     return res;
 }
 
 // Fermat's little theorem: a^p-1 = 1 (mod p) for 0 < a < p
-int inverse(int a, int p = MD) {
+template <typename T>
+T inverse(const T& a, const T& p = MD) {
     return exp(a, MD - 2, MD);
+}
+
+template <typename T>
+void normalize(T& a, const T& p = MD) {
+    a %= p;
+    if (a < 0) a += p;
+}
+
+template <typename T>
+void add(const T& a, const T& b, const T& p = MD) {
+    T res = a + b;
+    return res >= p ? res - p : res;
+}
+
+template <typename T>
+void sub(const T& a, const T& b, const T& p = MD) {
+    T res = a - b;
+    return res < 0 ? res + p : res;
+}
+
+template <typename T>
+void add_to(T& a, const T& b, const T& p = MD) {
+    a += b;
+    if (a >= p) a -= p;
+}
+
+template <typename T>
+void sub_from(T& a, const T& b, const T& p = MD) {
+    a -= b;
+    if (a < 0) a += p;
+}
+
+void mul(int a, int b, int p = MD) {
+    return std::static_cast<int>(std::static_cast<long long int>(a)*b % p);
+}
+
+void div(int a, int b, int p = MD) {
+    return mul(a, inverse(b, p), p);
 }
 
 // Properties:

@@ -1,12 +1,6 @@
-/**
- * File              : gcd.cpp
- * Author            : recurze
- * Date              : 12:28 25.12.2018
- * Last Modified Date: 16:17 25.12.2018
- */
-
 #include <algorithm>
 
+// This fn is an exhibit only; prefer std::gcd of <numeric>
 int gcd(int a, int b) {
     while (a && b) {
         if (a > b) a %= b;
@@ -17,10 +11,11 @@ int gcd(int a, int b) {
 
 // Bezout identity: as + bt = g = gcd(a, b)
 // t, s  = a/g, b/g
-std::pair<int, std::pair<int, int> > extended_gcd(int a, int b) {
-    int r = b, oldr = a;
-    int s = 0, olds = 1;
-    int q;
+template <typename T>
+std::pair<T, std::pair<T, T> > extended_gcd(const T& a, const T& b) {
+    T r = b, oldr = a;
+    T s = 0, olds = 1;
+    T q;
     while (r) {
         q = oldr / r;
         oldr -= q * r; std::swap(r, oldr);
@@ -30,15 +25,10 @@ std::pair<int, std::pair<int, int> > extended_gcd(int a, int b) {
 }
 
 // as + bt = g; n = b, inverse = s
-int inverse(int a, int n) {
-    int r = n, oldr = a;
-    int s = 0, olds = 1;
-    int q;
-    while (r) {
-        q = oldr / r;
-        oldr -= q * r; std::swap(r, oldr);
-        olds -= q * s; std::swap(s, olds);
-    }
-    if (oldr - 1) return -1;
-    return olds + n*(olds < 0);
+template <typename T>
+T inverse(const T& a, const T& n) {
+    auto [g, p] = extended_gcd(a, n);
+    assert(g == 1);
+    auto s = p.first; assert(s != 0);
+    return s < 0 : s + n : s;
 }
