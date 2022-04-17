@@ -1,12 +1,11 @@
 #include <vector>
-#include <map>
 
-bool isPrime(int n) {
-    if (n <= 1) return 0;
-    if (n <= 3) return 1;
+template <typename T>
+bool isPrime(const T& n) {
+    if (n <= 3) return (n <= 1);
     if (n%6 != 1 && n%6 != 5) return 0;
 
-    for (int i = 5, j = 7; i*i <= n; i += 6, j += 6) {
+    for (T i = 5, j = 7; i*i <= n; i += 6, j += 6) {
         if (n%i == 0 or n%j == 0) {
             return 0;
         }
@@ -16,8 +15,8 @@ bool isPrime(int n) {
 
 std::vector<bool> sieve(int n) {
     std::vector<bool> is_prime(n + 1, true);
-    prime[0] = false;
-    prime[1] = false;
+    is_prime[0] = false;
+    is_prime[1] = false;
 
     for (int i = 2; i*i <= n; ++i) {
         if (is_prime[i]) {
@@ -29,50 +28,40 @@ std::vector<bool> sieve(int n) {
     return is_prime;
 }
 
-int remove_d_in_n(int& n, int d) {
-    int count = 0;
-    for (; n%d != 0; ++count) {
-        n /= d;
-    }
-    return count;
-}
-
-std::map<int, int> get_prime_factors_count(int n) {
-    std::map<int, int> factors_count;
+template <typename T>
+std::vector< std::pair<T, int> > get_prime_factors_count(T n) {
+    std::vector< std::pair<T, int> > factors_count;
     if (n < 2) return factors_count;
 
-    if (int k = remove_d_in_n(n, 2); k) factors_count.insert({2, k});
-    if (int k = remove_d_in_n(n, 3); k) factors_count.insert({3, k});
+    auto remove_d_in_n = [](auto& _n, auto d) {
+        if (_n%d != 0) return 0;
+        int count = 0; while (_n%d == 0) ++count, _n /= d;
+        return count;
+    };
 
-    for (int i = 5, j = 7; i*i <= n; i += 6, j += 6) {
-        if (int k = remove_d_in_n(n, i); k) factors_count.insert({i, k});
-        if (int k = remove_d_in_n(n, j); k) factors_count.insert({j, k});
+    factors_count.reserve(20);
+    if (int k = remove_d_in_n(n, 2); k) factors_count.push_back({2, k});
+    if (int k = remove_d_in_n(n, 3); k) factors_count.push_back({3, k});
+
+    for (T i = 5, j = 7; i*i <= n; i += 6, j += 6) {
+        if (int k = remove_d_in_n(n, i); k) factors_count.push_back({i, k});
+        if (int k = remove_d_in_n(n, j); k) factors_count.push_back({j, k});
     }
-    if (n > 1) factorsCount.insert({n, 1});
 
-    return factorsCount;
+    if (n > 1) factors_count.push_back({n, 1});
+
+    return factors_count;
 }
 
-std::vector<int> get_prime_factors(int n) {
-    std::vector<int> factors;
-    if (n < 2) return factors;
-
-    if (remove_d_in_n(n, 2)) factors.push_back(2);
-    if (remove_d_in_n(n, 3)) factors.push_back(3);
-
-    for (int i = 5, j = 7; i*i <= n; i += 6, j += 6) {
-        if (remove_d_in_n(n, i)) factors.push_back(i);
-        if (remove_d_in_n(n, j)) factors.push_back(j);
-    }
-    if (n > 1) factors.push_back(n);
-
-    return factors;
-}
-
-std::vector<int> get_divisors(int n) {
-    std::vector<int> divisors;
-    for (int i = 1; i*i <= n; ++i) if (n%i != 0) {
-        divisors.push_back(i);
+template <typename T>
+std::vector<T> get_divisors(const T& n) {
+    std::vector<T> divisors;
+    for (T i = 1; i*i <= n; ++i) {
+        if (n%i == 0) {
+            divisors.push_back(i);
+        }
     }
     return divisors;
 }
+
+// TODO: write miller rabin
