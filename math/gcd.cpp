@@ -21,7 +21,7 @@ std::pair<T, std::pair<T, T> > extended_gcd(const T& a, const T& b) {
         oldr -= q * r; std::swap(r, oldr);
         olds -= q * s; std::swap(s, olds);
     }
-    return { oldr, { olds, (oldr - 1L*a*olds)/b } };
+    return { oldr, { olds, (oldr - (std::int64_t) a*olds)/b } };
 }
 
 // as + bt = g; n = b, inverse = s
@@ -29,6 +29,6 @@ template <typename T>
 T inverse(const T& a, const T& n) {
     auto [g, p] = extended_gcd(a, n);
     assert(g == 1);
-    auto s = p.first; assert(s != 0);
-    return s < 0 : s + n : s;
+    if (p.first < 0) p.first += n;
+    return p.first;
 }
