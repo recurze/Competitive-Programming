@@ -39,7 +39,7 @@ void in(X& x, Y& y, Z& z) {
 
 template <typename T1, typename T2>
 std::ostream& operator<<(std::ostream& os, const std::pair<T1, T2>& v) {
-    return os << '(' << v.first << ' ' << v.second << ')';
+    return os << v.first << ' ' << v.second;
 }
 
 template<typename T>
@@ -54,9 +54,9 @@ public:
 template<typename Container>
 std::enable_if_t<has_const_iterator<Container>::value and not std::is_same<Container, std::string>::value, std::ostream&>
 operator<<(std::ostream& os, const Container& v) {
-    os << '{'; std::string separator;
-    for (auto& x: v) os << separator << x, separator = ", ";
-    return os << '}';
+    std::string separator;
+    for (const auto& x: v) os << separator << x, separator = ' ';
+    return os;
 }
 
 template <typename T>
@@ -81,6 +81,7 @@ void eout(const char *s, const T1 H, const T2... T) {
 }
 
 /******************************************************************************/
+/******************************************************************************/
 
 #define nl                std::cout << '\n'
 
@@ -91,26 +92,26 @@ void eout(const char *s, const T1 H, const T2... T) {
 #endif
 
 #define rep(i, n)         for (decltype(n) i = (0); i < (n); ++i)
-#define per(i, n)         for (int i = (n) - 1; i > -1; --i)
+#define per(i, n)         for (auto i = n; i--; )
 #define repr(i, l, r)     for (auto i = (l); i < (r); ++i)
 
 #define sz(v)             ((v).size())
 #define all(v)            (v).begin(), (v).end()
 #define lla(v)            (v).rbegin(), (v).rend()
 
-#define no                std::cout << "No\n"
-#define yes               std::cout << "Yes\n"
+#define no                std::cout << "No"
+#define yes               std::cout << "Yes"
 
 /******************************************************************************/
 
-const int INF           = 2147483647;
-const long long int LNF = 9223372036854775807LL;
+constexpr auto INF = INT32_MAX;
+constexpr auto LNF = INT64_MAX;
 
-const int N  = 505050;
-const int MD = 1000*1000*1000 + 7;
+constexpr int N  = 505050;
+constexpr int MD = 1000*1000*1000 + 7;
 
-using ll  = long long int;
-using vl  = std::vector<ll>;
+using i64 = std::int64_t;
+using vl  = std::vector<i64>;
 using vi  = std::vector<int>;
 using vb  = std::vector<bool>;
 using ii  = std::pair<int, int>;
@@ -120,6 +121,7 @@ using vii = std::vector<ii>;
 /******************************************************************************/
 /******************************************************************************/
 
+//#define TC
 int solve() {
     return 0;
 }
@@ -127,7 +129,9 @@ int solve() {
 int main() {
     std::ios_base::sync_with_stdio(0); std::cin.tie(nullptr);
 
-    //int t; in(t); repr(tc, 1, t + 1)
+#ifdef TC
+    int t = 1; in(t); rep(tc, t)
+#endif
     solve(), nl;
 
     return 0;
